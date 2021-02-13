@@ -6,6 +6,7 @@ import shutil
 import sys
 sys.path.append("..")
 from util import utils
+from log import logger
 
 
 
@@ -13,11 +14,14 @@ from util import utils
 
 ISLOGGEDIN = False
 ISAUTHREQUIRED = True # ===> pick this from config
-
+logObj = getLogger()
 app = Flask(__name__)
 
 @app.route('/server',methods=['GET','POST'])  # writing it for both get and post
 def serverMain():
+	userIp = request.remote_addr
+	uUid = utils.getuUid()
+	logObj.debug("accessing /server by :" + userIp + uUid)
 	global ISLOGGEDIN
 	global ISAUTHREQUIRED
 	#first check fro config whether auth is enabled or not 
@@ -32,17 +36,18 @@ def serverMain():
 
 @app.route('/login',methods=['POST'])
 def loginServer():
+	userIp = request.remote_addr
+	uUid = utils.getuUid()
+	logObj.debug("accessing /login by :" + userIp + uUid)
 	global ISLOGGEDIN
 	global ISAUTHREQUIRED
 	userName = ""
 	passWord = ""
 	authSuccess = False
-	uUid = utils.getuUid()
-	print("UUid is {}".format(uUid))
 	#if already logged in or if auth is not required we need to proceed to next page 
 	if ISLOGGEDIN == False and ISAUTHREQUIRED == True:
-		userName = str(request.form.get('Username'))
-		passWord = str(request.form.get('Password'))
+		userName = str(request.form.get('username'))
+		passWord = str(request.form.get('password'))
 		print(userName)
 		print(passWord)
 		#TODO: call post sql query with given username and password
@@ -54,6 +59,7 @@ def loginServer():
 			print("Successful!")
 
 portNum = 8001  #TODO: get it from config
+
 print("here ")
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port = portNum, debug=True, threaded=True)
