@@ -9,13 +9,8 @@ def getLogger():
     if LOGOBJ is None:
         LOGOBJ = logging.getLogger(__name__)
         LOGOBJ.setLevel(LOGLEVEL)
+        LOGOBJ.basicConfig(format='%(levelname)s:%(message)s',filename='logFile.log', level=logging.DEBUG)
     return LOGOBJ
 
-def getLogLevel():
-	return LOGLEVEL
 
-def setLogLevel():
-	if LOGOBJ is not None:
-		LOGOBJ.setLevel(LOGLEVEL)
-	else:
-		
+
